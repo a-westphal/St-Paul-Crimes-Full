@@ -228,9 +228,7 @@
 										}
 									}
 								}
-
 							}
-
 						}
 						//add markers for each of the keys
 						var markersLayer = new L.LayerGroup();
@@ -255,6 +253,7 @@
 							var search_out = reverse + "lat=" + center['lat'] + "&lon=" + center['lng'] + "&addressdetails=1"; 
 				
 							$.getJSON(search_out, function(data) {
+								console.log(data);
 								app.search_text = data['display_name'];
 							});
 
@@ -290,11 +289,14 @@
 
 				console.log(search);
 				$.getJSON(search, function(data){
-					console.log(data[0]['lat']);
+					
 					var lat = data[0]['lat'];
 					var lon = data[0]['lon'];
 
-					map.setView([lat,lon],17);
+					if((lat <= 44.9924769 || lat >= 44.8868761) && (lon >= -93.241981 || lon <= -93.0132809))
+					{
+						map.setView([lat,lon],17);
+					}
 				}); 
 			}
 
@@ -302,24 +304,6 @@
 			{
 				visible = visible_vals;
 			}
-			function setClass(code)
-			{
-				if(code >= 110 && code <=566)
-				{
-					//violent
-				}
-
-				else if(code >= 600 && code <= 1436 )
-				{
-					//property
-				}
-
-				else
-				{	
-					//other
-				}
-			}
-
 
 </script>
 	</head>
