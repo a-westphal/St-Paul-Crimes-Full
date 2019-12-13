@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+	<!-- Need Leaflet API, Nominatim API, St Paul Crimes API, and possibly another framework
+		to help organize our webpage -->
+	<head>
+		<!-- required tags: -->
+		<meta charset ="utf-8">
+		<meta name ="viewport" content ="width=device-width", intial-scale="1">
+
+
+		<!-- jQuery -->
+		<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    	<script type="application/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    	<script type="application/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+		<!-- Bootstrap CSS: -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+		<!-- Leaflet-->
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+	   	integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+	   	crossorigin=""/>
+	   	<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+  		integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+   		crossorigin=""></script>
+   		<script src="../dist/leaflet.customsearchbox.min.js"></script>
+
+		<!-- Vue -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+		 <!-- JS files for Search Box -->
+    	<script src="https://cdn-geoweb.s3.amazonaws.com/esri-leaflet/0.0.1-beta.5/esri-leaflet.js"></script>
+
+    	<script src="https://cdn-geoweb.s3.amazonaws.com/esri-leaflet-geocoder/0.0.1-beta.5/esri-leaflet-geocoder.js"></script>
+
+    	<!-- CSS for Search Box-->
+    	<link rel="stylesheet" type="text/css" href="https://cdn-geoweb.s3.amazonaws.com/esri-leaflet-geocoder/0.0.1-beta.5/esri-leaflet-geocoder.css">
+
+	   <!-- General CSS-->
+	   <link href="css/style.css" rel ="stylesheet" type = "text/css">
+
+		<title> St. Paul Crimes </title>
+
+		 <script> 
+			var app;
+			var location;
+			var geocode = 'http://open.mapquestapi.com/nominatim/v1/search.php?key=uBxMcgwVXryBtdx0zShGffi0qgdlIcVN&format=json&q=';
+			var reverse = 'http://open.mapquestapi.com/nominatim/v1/reverse.php?key=uBxMcgwVXryBtdx0zShGffi0qgdlIcVN&format=json&';
+			var latlon;
+			var visible = [];
+			var map;
+			function Prompt() {
+				$("#dialog-form").dialog({
+					autoOpen: true,
+					modal: true,
+					width: "360px",
+					buttons: {
+						"Ok": function() {
+							var prompt_input = $("#prompt_input");
+							Init(prompt_input.val());
+							$(this).dialog("close");
+						},
+						"Cancel": function() {
+							$(this).dialog("close");
+						}
+					}
+				});
+			} //prompt
+
+
+			function Init(crime_api_url) {
+				//Map
+				var southWest = L.latLng(44.8868761,-93.241981);
+				var northEast = L.latLng(44.9924769,-93.0132809);
+				var bounds = L.latLngBounds(southWest,northEast);
+
+				var neighborhoods = {
+					"Conway/Battlecreek/Highwood" : {
+						lat: 44.929398,
+						lon: -93.021122
+					},
+					"Greater East Side": {
+						lat: 44.977504, 
+						lon: -93.025306
+					},
+					"West Side": {
+						lat: 44.934140,
+						lon: -93.080875
+					},
+					"Dayton's Bluff": {
+						lat: 44.956799, 
+						lon: -93.060833
+					},
+					"Payne/Phalen":{
+						lat: 44.977521, 
+						lon: -93.065995
+					},
+					"North End":{
+						lat: 44.977401,
+						lon: -93.105991
+					},
+					"Thomas/Dale(Frogtown)":{
+						lat: 44.959437, 
+						lon: -93.121250
+					},
+					"Summit/University":{
+						lat: 44.948550, 
+						lon:-93.126295
+					},
+					"West Seventh":{
+						lat: 44.928392,
+						lon: -93.125790
+					},
+					"Como":{
+						lat: 44.987942, 
+						lon: -93.220351
+					},
+					"Hamline/Midway" :{
+						lat: 44.962886, 
+						lon: -93.167055
+					},
+					"St. Anthony":{
+						lat: 44.974259, 
+						lon: -93.194574
+					},
+					"Union Park":{
+						lat: 44.948477,
+						lon: -93.174699
+					},
+					"Macalester-Groveland":{
+						lat: 44.934297,
+						lon: -93.177209
+					},
+					"Highland":{
+						lat: 44.912524,
+						lon: -93.177195
+					},
+					"Summit Hill":{
+						lat: 44.937841, 
+						lon: -93.136439
+					},
+					"Capitol River":{
+						lat: 44.948285, 
+						lon: -93.091623
+					}
+				}; //neighborhoods 
+
+				map = L.map('mapid').setView([44.9537,-93.0900], 13);
+					L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+				   		minZoom: 11,
+				   		maxZoom: 18,
+				   		id: 'mapbox/streets-v11',
+			  			accessToken: 'pk.eyJ1IjoiYXdlc3RwaGFsIiwiYSI6ImNrM3Z5M2R5MTBoc2UzcGxiMWR3d2FoYW0ifQ.Eow1YC0uUG2NPxBM-iPmbg'
+					}).addTo(map);
+
+				map.setMaxBounds(bounds);
+
+					//search bounds: 
+					//NW corner: 44.9924769,-93.241981,
+					//NE corner: 44.9924769,-93.0132809,15
+					//SE corner: 44.8868761,-93.0132809
+					//SW corner: 44.8868761,-93.2063927
+
+				app = new Vue({
+					el: "#app",
+					data: {
+						search_text: "",
+						incidents: {
+								 
+						},
+						test: [1,2,3]
+					},
+					methods: {
+						computed:function (neighborhood) 
+						{
+							if(visible.includes(neighborhood))
+							{
+								return true;
+							}
+
+							else
+							{
+								return false;
+							}
+						}
+					}
+				 });
+						
+					//data:
+				
+				$.getJSON(crime_api_url + "/incidents",(data)=>{
+						var incidents = data;
+						console.log(incidents);
+						const keys = Object.keys(incidents);
+						var crimes = {
+							"Conway/Battlecreek/Highwood" : 0,
+					  		"Greater East Side": 0,
+						  	"West Side":0,
+						  	"Dayton's Bluff":0 ,
+						  	"Payne/Phalen":0,
+						 	"North End":0,
+						  	"Thomas/Dale(Frogtown)":0,
+						  	"Summit/University":0,
+						  	"West Seventh":0,
+						  	"Como":0,
+						 	"Hamline/Midway" :0,
+						  	"St. Anthony":0,
+						 	"Union Park":0,
+						  	"Macalester-Groveland":0,
+						  	"Highland":0,
+						  	"Summit Hill":0,
+						  	"Capitol River":0
+						};
+						const nest_Keys = Object.keys(incidents[keys[0]]);
+						//console.log(nest_Keys);
+						for(let i = 0; i < keys.length; i ++)
+						{
+							//console.log(incidents[keys[i]])
+							if(incidents[keys[i]]['date'] <= "2019-10-31" && incidents[keys[i]]['date'] >= "2019-10-01")
+							{
+								app.incidents[keys[i]] = incidents[keys[i]];
+								app.incidents[keys[i]]['class'] = 'violent';
+								for(let j =0; j < nest_Keys.length; j ++)
+								{
+									if(j == 5)
+									{
+										neighborhood_hold = incidents[keys[i]][nest_Keys[j]];
+										if(crimes.hasOwnProperty(neighborhood_hold))
+										{
+											crimes[neighborhood_hold] += 1;
+										}
+									}
+								}
+
+							}
+
+						}
+						//add markers for each of the keys
+						var markersLayer = new L.LayerGroup();
+						const neigh_Keys = Object.keys(neighborhoods);
+						const crime_Keys = Object.keys(crimes);
+						for(let i = 0; i < neigh_Keys.length; i ++)
+						{
+							lat = neighborhoods[neigh_Keys[i]]['lat'];
+							lon = neighborhoods[neigh_Keys[i]]['lon'];
+							crimes_num = crimes[neigh_Keys[i]];
+
+							var list = "<dl><dt>Neighborhood</dt>" + "<dd>" + neigh_Keys[i] + "</dd>" + "<dt>Crimes</dt>" + "<dd>" + crimes_num + "</dd>"
+							L.marker([lat,lon]).bindPopup(list).addTo(markersLayer);
+						}
+
+						map.addLayer(markersLayer);
+
+						//check if the map has moved: 
+						map.on('moveend',function(){
+
+							var center = map.getCenter();
+							var search_out = reverse + "lat=" + center['lat'] + "&lon=" + center['lng'] + "&addressdetails=1"; 
+				
+							$.getJSON(search_out, function(data) {
+								console.log(data);
+								app.search_text = data['display_name'];
+							});
+
+							app.search_text=center['lat'] + "," + center['lng'];
+							var northWest = L.latLng(map.getBounds().getNorth(), map.getBounds().getWest());
+							var southEast = L.latLng(map.getBounds().getSouth(), map.getBounds().getEast());
+									
+							var myBounds = L.latLngBounds(northWest,southEast);
+							var visible_hold = [];	
+							for(let i = 0; i < neigh_Keys.length; i ++)
+							{
+								var lat_two = neighborhoods[neigh_Keys[i]]['lat'];
+								var lon_two = neighborhoods[neigh_Keys[i]]['lon'];
+								if(myBounds.getNorth() < lat_two || myBounds.getSouth() > lat_two || myBounds.getEast() < lon_two || myBounds.getWest() > lon_two )
+								{
+									
+								}
+								else
+								{
+									visible_hold.push(neigh_Keys[i]);
+								}
+							}  
+							setVisible(visible_hold);
+						})
+					});
+			}//Init
+
+			//check if the search button has been clicked:
+			function searchMap(){
+				var locale = app.search_text;
+				var locale = locale.split(" ").join("+");
+				var search = geocode + locale + "+St+Paul+MN&addressdetails=1&limit=1"; 
+				console.log(" Search variable : " + search);
+
+				$.getJSON(search, function(data){
+					console.log("search data: " + data['lat']);
+					var lat = data['lat'];
+					var lon = data['lon'];
+
+					map.setView([lat,lon],17);
+				}); 
+			}
+
+			function setVisible(visible_vals)
+			{
+				visible = visible_vals;
+			}
+			function setClass(code)
+			{
+				if(code >= 110 && code <=566)
+				{
+					//violent
+				}
+
+				else if(code >= 600 && code <= 1436 )
+				{
+					//property
+				}
+
+				else
+				{	
+					//other
+				}
+			}
+
+
+</script>
+	</head>
+	<body id = "margins" onload="Prompt()">
+		<!-- Nav bar -->
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  			<a class="navbar-brand" href="#">Navigation</a>
+  			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    			<span class="navbar-toggler-icon"></span>
+  			</button>
+ 			 <div class="collapse navbar-collapse" id="navbarSupportedContent">
+   				 <ul class="navbar-nav mr-auto">
+      				<li class="nav-item active">
+        				<a class="nav-link" href="index.html"> Home <span class="sr-only">(current)</span></a>
+      				</li>
+      				<li class="nav-item">
+       					<a class="nav-link" href="AboutTheProject.html">About the Project</a>
+     				 </li>
+     			</ul>
+  			</div>
+		</nav>
+
+		<div class = "jumbotron" style = "background-image: url(https://external-preview.redd.it/PY-AYHg2xqlhvQgvMapcbR6sKBr3Kori5lx0NML2UdU.jpg?auto=webp&s=4d6cf326ecff159d687478d4d91897c9298a2857); background-size:cover; ">
+			<h1> St. Paul Area Crimes </h1>
+			<!-- color to be worked on: -->
+			<p id= "jumbotext"> 
+				Search our interactive map and utilize the table to investigate the reported crimes in your area
+			</p>
+		</div>
+
+		<!-- Map--> 
+		<div id="mapid"> </div>
+		<div id="app">
+			<div id = "input_box">
+				<input type="text" v-model ="search_text">
+					<button onclick = "searchMap()" id = "search_button" type = "button"> Search </button>
+				</input>
+			</div>
+
+		 <!--
+            	Table from spotify example. Need to edit
+		-->
+
+			<div id = "table_space">
+				<h1>
+				Table of Crime Data
+				</h1>
+				<h3> 	
+				<table id = "table" frame = "box">
+					<thead>
+						<th> Date </th>
+						<th> Code </th>
+						<th> Neighborhood Name </th>
+						<th> Incident-Type </th>
+					</thead>
+					<tbody id = "table_text">
+						<tr v-for = "item in incidents" v-if= "computed(item.neighborhood_name)">
+							<!--v-if= "item.checkVisible() == true-->
+							<td > {{ item.date }} </td>
+							<td> {{ item.code }} </td>
+							<td> {{ item.neighborhood_name }} </td>
+							<td> {{ item.incident }} </td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+    	</div> 
+
+		<!--end of table-->
+		</div>
+		<div id="dialog-form">
+	        <label for="name">URL for St. Paul Crime API:</label>
+	        <input type="text" id="prompt_input" class="text ui-widget-content ui-corner-all" style="width: 320px;"/>
+   		 </div>
+
+		<!--JavaScript! -->
+
+		 <!-- Make sure you put this AFTER Leaflet's CSS -->
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+	</body>
+</html>
