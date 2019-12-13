@@ -12,6 +12,7 @@ var js2xmlparser = require('js2xmlparser');
 var public_dir = path.join(__dirname, 'public');
 var template_dir = path.join(__dirname, 'templates');
 var db_filename = path.join(__dirname,'db','stpaul_crime.sqlite3');
+console.log(db_filename);
 
 var app = express();
 var port = 8000;

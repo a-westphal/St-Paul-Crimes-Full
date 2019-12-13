@@ -190,7 +190,6 @@
 				
 				$.getJSON(crime_api_url + "/incidents",(data)=>{
 						var incidents = data;
-						console.log(incidents);
 						const keys = Object.keys(incidents);
 						var crimes = {
 							"Conway/Battlecreek/Highwood" : 0,
@@ -212,10 +211,8 @@
 						  	"Capitol River":0
 						};
 						const nest_Keys = Object.keys(incidents[keys[0]]);
-						//console.log(nest_Keys);
 						for(let i = 0; i < keys.length; i ++)
 						{
-							//console.log(incidents[keys[i]])
 							if(incidents[keys[i]]['date'] <= "2019-10-31" && incidents[keys[i]]['date'] >= "2019-10-01")
 							{
 								app.incidents[keys[i]] = incidents[keys[i]];
@@ -258,7 +255,6 @@
 							var search_out = reverse + "lat=" + center['lat'] + "&lon=" + center['lng'] + "&addressdetails=1"; 
 				
 							$.getJSON(search_out, function(data) {
-								console.log(data);
 								app.search_text = data['display_name'];
 							});
 
@@ -291,12 +287,12 @@
 				var locale = app.search_text;
 				var locale = locale.split(" ").join("+");
 				var search = geocode + locale + "+St+Paul+MN&addressdetails=1&limit=1"; 
-				console.log(" Search variable : " + search);
 
+				console.log(search);
 				$.getJSON(search, function(data){
-					console.log("search data: " + data['lat']);
-					var lat = data['lat'];
-					var lon = data['lon'];
+					console.log(data[0]['lat']);
+					var lat = data[0]['lat'];
+					var lon = data[0]['lon'];
 
 					map.setView([lat,lon],17);
 				}); 
