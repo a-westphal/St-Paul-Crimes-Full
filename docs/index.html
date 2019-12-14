@@ -165,10 +165,11 @@
 					el: "#app",
 					data: {
 						search_text: "",
+						date_from: "2019-10-01",
+						date_to: "2019-10-31"
 						incidents: {
 								 
 						},
-						test: [1,2,3]
 					},
 					methods: {
 						computed:function (neighborhood) 
@@ -253,8 +254,8 @@
 							var search_out = reverse + "lat=" + center['lat'] + "&lon=" + center['lng'] + "&addressdetails=1"; 
 				
 							$.getJSON(search_out, function(data) {
-								console.log(data);
 								app.search_text = data['display_name'];
+								console.log(app.search_text);
 							});
 
 							app.search_text=center['lat'] + "," + center['lng'];
@@ -362,7 +363,7 @@
 					<tbody id = "table_text">
 						<tr v-for = "item in incidents" v-if= "computed(item.neighborhood_name)">
 							<!--v-if= "item.checkVisible() == true-->
-							<td > {{ item.date }} </td>
+							<td> {{ item.date }} </td>
 							<td> {{ item.code }} </td>
 							<td> {{ item.neighborhood_name }} </td>
 							<td> {{ item.incident }} </td>
