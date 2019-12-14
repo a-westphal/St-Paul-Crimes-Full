@@ -349,27 +349,34 @@
 		-->
 
 			<div id = "table_space">
-				<h1>
-				Table of Crime Data
-				</h1>
-				<h3> 	
-				<table id = "table" frame = "box">
-					<thead>
-						<th> Date </th>
-						<th> Code </th>
-						<th> Neighborhood Name </th>
-						<th> Incident-Type </th>
-					</thead>
-					<tbody id = "table_text">
-						<tr v-for = "item in incidents" v-if= "computed(item.neighborhood_name)">
-							<!--v-if= "item.checkVisible() == true-->
-							<td> {{ item.date }} </td>
-							<td> {{ item.code }} </td>
-							<td> {{ item.neighborhood_name }} </td>
-							<td> {{ item.incident }} </td>
-						</tr>
-					</tbody>
-				</table>
+				<div class  ="row">
+					<div class = "col-sm"> 
+						<p> EY GIRL</p>
+					</div> <!--column for filter -->
+
+					<div class = "col-sm">
+						<h1>
+						Table of Crime Data
+						</h1> 	
+						<table id = "table" frame = "box">
+							<thead>
+								<th> Date </th>
+								<th> Code </th>
+								<th> Neighborhood Name </th>
+								<th> Incident-Type </th>
+							</thead>
+							<tbody id = "table_text">
+								<tr v-for = "item in incidents" v-if= "computed(item.neighborhood_name)">
+									<!--v-if= "item.checkVisible() == true-->
+									<td> {{ item.date }} </td>
+									<td> {{ item.code }} </td>
+									<td> {{ item.neighborhood_name }} </td>
+									<td> {{ item.incident }} </td>
+								</tr>
+							</tbody>
+						</table>
+					</div> <!--column for table -->
+				</div> <!--rows -->
 			</div>
     	</div> 
 
