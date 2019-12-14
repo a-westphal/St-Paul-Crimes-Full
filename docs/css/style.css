@@ -13,6 +13,14 @@
 	color:white;
 }
 
+li.hs-form-checkbox {
+	display: inline-block;
+	width: 50%;
+}
+
+.date_input {
+	margin-top: 1px
+}
 .services-section img {
     width: 225px;
     margin: auto;    
