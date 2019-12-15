@@ -6,6 +6,7 @@ var latlon;
 var visible = [];
 var map;
 var neighborhoods;
+var markersLayer;
 
 function Prompt() {
 	$("#dialog-form").dialog({
@@ -176,6 +177,13 @@ function Init(crime_api_url) {
 					//other
 					return "other";
 				} 
+			},
+			addMarker:function(incident)
+			{
+				console.log(incident['block']);
+				//$.getJSON()
+				//var list = "<dl><dt>Neighborhood</dt>" + "<dd>" + incident['neighborhood_name'] + "</dd>" + "<dt>Incident:</dt>" + "<dd>" + incident['incident'] + "</dd>" + "<dt> Date: </dt>" +"<dd>" +incident['date'] +"</dd>"
+				//L.marker([lat,lon]).bindPopup(list).addTo(markersLayer);
 			}			
 		}
 
@@ -294,7 +302,7 @@ function getData(crime)
 			}
 		}
 		//add markers for each of the keys
-		var markersLayer = new L.LayerGroup();
+		markersLayer = new L.LayerGroup();
 		const neigh_Keys = Object.keys(neighborhoods);
 		const crime_Keys = Object.keys(crimes);
 		for(let i = 0; i < neigh_Keys.length; i ++)
@@ -344,7 +352,3 @@ function getData(crime)
 
 } //getData()
 
-function addMarker(incident)
-{
-	console.log(incident);
-}
