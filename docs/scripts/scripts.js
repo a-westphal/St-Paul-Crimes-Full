@@ -28,19 +28,7 @@ function Prompt() {
 
 function Init(crime_api_url) {
 	//Map
-	/*window.onload = onPageLoad();
-	function onPageLoad()
-	{
-		for(let i = 1; i < 18; i ++)
-		{
-			var element = "N" + i;
-			document.getElementById(element).checked = true;
-			addNFilter(element);
-
-		}
-
-	}*/ 
-
+	
 	setCrimeAPI(crime_api_url);
 	var southWest = L.latLng(44.8868761,-93.241981);
 	var northEast = L.latLng(44.9924769,-93.0132809);
@@ -137,11 +125,6 @@ function Init(crime_api_url) {
 		el: "#app",
 		data: {
 			search_text: "",
-			date_from: "2019-10-01",
-			date_to: "2019-10-31",
-			time_from: "",
-			time_to: "",
-			//neigh_filter: ["Conway/Battlecreek/Highwood","Greater East Side","West Side","Dayton's Bluff","Payne/Phalen","North End","Thomas/Dale(Frogtown)","Summit/University","West Seventh","Como","Hamline/Midway","St. Anthony","Union Park","Macalester-Groveland","Highland","Summit Hill","Capitol River"],
 			incidents: {
 								 
 			}
