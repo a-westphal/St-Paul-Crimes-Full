@@ -183,6 +183,7 @@ function Init(crime_api_url) {
 				console.log(incident['block']);
 				var res = incident['block'].split(" ");
 				var block;  
+				console.log(res[0]);
 				if(res[0].includes("X"))
 				{
 					block = res[0].replace("X","0");
