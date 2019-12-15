@@ -182,13 +182,6 @@ function Init(crime_api_url) {
 		}
 
 	});
-	
-	var neighborhood_keys = Object.keys(neighborhoods);
-	for(let i = 0; i < 17; i ++)
-	{
-		var element = neighborhood_keys[i];
-		document.getElementById(element).checked = true;
-	}		
 
 	//data:
 	getData(crime_api_url);
