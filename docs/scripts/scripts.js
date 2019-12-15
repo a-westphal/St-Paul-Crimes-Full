@@ -183,18 +183,24 @@ function Init(crime_api_url) {
 				console.log(incident['block']);
 				var res = incident['block'].split(" ");
 				var block;  
+				var block_hold;
 				if(res[0].includes("X"))
 				{
-					block = res[0].replace("X","0");
+					block_hold = res[0].replace("X","0");
+					block = block_hold.replace(" ","+");
 					console.log(block);
 				}
 				else {
-					block = res[0];
+					block = incident['block'].replace(" ","+");
 					console.log(block);
 				}
-				//$.getJSON()
-				//var list = "<dl><dt>Neighborhood</dt>" + "<dd>" + incident['neighborhood_name'] + "</dd>" + "<dt>Incident:</dt>" + "<dd>" + incident['incident'] + "</dd>" + "<dt> Date: </dt>" +"<dd>" +incident['date'] +"</dd>"
-				//L.marker([lat,lon]).bindPopup(list).addTo(markersLayer);
+
+				var search = geocode + block;
+				$.getJSON(geocode, function(data){
+					var list = "<dl><dt>Neighborhood</dt>" + "<dd>" + incident['neighborhood_name'] + "</dd>" + "<dt>Incident:</dt>" + "<dd>" + incident['incident'] + "</dd>" + "<dt> Date: </dt>" +"<dd>" +incident['date'] +"</dd>"
+					L.marker([lat,lon]).bindPopup(list).addTo(markersLayer);
+				})
+
 			}			
 		}
 
