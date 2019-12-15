@@ -60,14 +60,14 @@ table, th, td {
 }
 
 .violent {
-	background-color: rgb(222, 102, 75);
+	background-color: rgb(224, 102, 83);
 }
 .property {
-	background-color: rgb(92, 168, 209);
+	background-color: rgb(224, 191, 83);
 }
 
 .other{
-	background-color: rgb(107, 143, 81) 
+	background-color: rgb(83, 224, 144) 
 }
 
 h1 {
