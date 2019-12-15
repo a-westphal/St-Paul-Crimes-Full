@@ -206,7 +206,7 @@ function setVisible(visible_vals)
 	visible = visible_vals;
 }
 
-/*
+
 function addNFilter(neighborhood)
 {
 	console.log("addNFilter");
@@ -223,7 +223,7 @@ function addNFilter(neighborhood)
 
 	getData(crime);
 }
-*/ 
+
 function getData(crime)
 {
 	var count = 0;
