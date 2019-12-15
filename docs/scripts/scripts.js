@@ -249,9 +249,11 @@ function getData(crime)
 			"Summit Hill":0,
 			"Capitol River":0
 		};
+
 		const nest_Keys = Object.keys(incidents[keys[0]]);
 		for(let i = 0; i < keys.length; i ++)
 		{
+
 			if((incidents[keys[i]]['date'] <= app.date_to && incidents[keys[i]]['date'] >= app.date_from) && (app.neigh_filter.includes(incidents[keys[i]]['neighborhood_name'])))
 			{
 				app.incidents[keys[i]] = incidents[keys[i]];
@@ -264,6 +266,7 @@ function getData(crime)
 						if(crimes.hasOwnProperty(neighborhood_hold))
 						{
 							crimes[neighborhood_hold] += 1;
+							console.log(crimes);
 						}
 					}
 				}
@@ -321,5 +324,4 @@ function getData(crime)
 		})
 	});
 
-	console.log(count);
 } //getData()
