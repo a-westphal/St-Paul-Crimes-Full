@@ -187,7 +187,7 @@ function Init(crime_api_url) {
 				if(res[0].includes("X"))
 				{
 					block_hold = res[0].replace("X","0");
-					block = block_hold.splice("&");
+					block_hold = block_hold.splice("&");
 					block = block.split(" ").join("+");
 					console.log(block);
 				}
