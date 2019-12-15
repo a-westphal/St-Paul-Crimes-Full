@@ -9,6 +9,9 @@
 	-webkit-text-stroke:.5px black;
 }
 
+.header_text {
+	font-size: 15px;
+}
 #header-text{
 	color:white;
 }
