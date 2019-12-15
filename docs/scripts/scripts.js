@@ -187,10 +187,12 @@ function Init(crime_api_url) {
 				if(res[0].includes("X"))
 				{
 					block_hold = res[0].replace("X","0");
+					block = block.splice("&");
 					block = block_hold.split(" ").join("+");
 					console.log(block);
 				}
 				else {
+					block = block.splice("&");
 					block = incident['block'].split(" ").join("+");
 					console.log(block);
 				}
