@@ -165,6 +165,7 @@ function Init(crime_api_url) {
 	for(let i = 0; i < 17; i ++)
 	{
 		var element = neighborhood_keys[i];
+		console.log(element);
 		document.getElementById(element).checked = true;
 	}		
 
