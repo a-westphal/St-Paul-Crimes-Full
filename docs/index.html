@@ -143,7 +143,7 @@
 								<th> Incident-Type </th>
 							</thead>
 							<tbody id = "table_text">
-								<tr v-for = "item in incidents" v-if= "computed(item.neighborhood_name)" :class="getClass(item.code)" v-on ="addMarker(item)">
+								<tr v-for = "item in incidents" v-if= "computed(item.neighborhood_name)" :class="getClass(item.code)" @click ="addMarker(item)">
 									<td> {{ item.date }} </td>
 									<td> {{ item.code }} </td>
 									<td> {{ item.neighborhood_name }} </td>
