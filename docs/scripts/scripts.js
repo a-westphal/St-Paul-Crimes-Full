@@ -28,7 +28,19 @@ function Prompt() {
 
 function Init(crime_api_url) {
 	//Map
-	
+	/*window.onload = onPageLoad();
+	function onPageLoad()
+	{
+		for(let i = 1; i < 18; i ++)
+		{
+			var element = "N" + i;
+			document.getElementById(element).checked = true;
+			addNFilter(element);
+
+		}
+
+	}*/ 
+
 	setCrimeAPI(crime_api_url);
 	var southWest = L.latLng(44.8868761,-93.241981);
 	var northEast = L.latLng(44.9924769,-93.0132809);
@@ -125,6 +137,11 @@ function Init(crime_api_url) {
 		el: "#app",
 		data: {
 			search_text: "",
+			date_from: "2019-10-01",
+			date_to: "2019-10-31",
+			time_from: "",
+			time_to: "",
+			//neigh_filter: ["Conway/Battlecreek/Highwood","Greater East Side","West Side","Dayton's Bluff","Payne/Phalen","North End","Thomas/Dale(Frogtown)","Summit/University","West Seventh","Como","Hamline/Midway","St. Anthony","Union Park","Macalester-Groveland","Highland","Summit Hill","Capitol River"],
 			incidents: {
 								 
 			}
@@ -160,11 +177,49 @@ function Init(crime_api_url) {
 					//other
 					return "other";
 				} 
+			},
+			addMarker:function(incident)
+			{
+				console.log(incident['block']);
+				var res = incident['block'].split(" ");
+				var block;  
+				var block_hold;
+				if(res[0].includes("X"))
+				{
+					block_hold = res[0].replace("X","0");
+					block = block.splice("&");
+					block = block_hold.split(" ").join("+");
+					console.log(block);
+				}
+				else {
+					block = block.splice("&");
+					block = incident['block'].split(" ").join("+");
+					console.log(block);
+				}
 
-			}
+				var search = geocode + block +"+St+Paul+MN&addressdetails=1&limit=1";
+				console.log(search);
+				$.getJSON(geocode, function(data){
+					//console.log(data);
+					var block_lat = data[0]['lat'];
+					var block_lon = data[0]['lon'];
+					console.log("lat: " + block_lat);
+					console.log("lon: " + block_lon);
+					var list = "<dl><dt>Neighborhood</dt>" + "<dd>" + incident['neighborhood_name'] + "</dd>" + "<dt>Incident:</dt>" + "<dd>" + incident['incident'] + "</dd>" + "<dt> Date: </dt>" +"<dd>" +incident['date'] +"</dd>"
+					L.marker([block_lat,block_lon]).bindPopup(list).addTo(markersLayer);
+				})
+
+			}			
 		}
 
 	});
+	
+	var neighborhood_keys = Object.keys(neighborhoods);
+	for(let i = 0; i < 17; i ++)
+	{
+		var element = neighborhood_keys[i];
+		document.getElementById(element).checked = true;
+	}		
 
 	//data:
 	getData(crime_api_url);
