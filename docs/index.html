@@ -89,9 +89,11 @@
 					<div class = "col-sm"> 
 						<!-- Date filter -->
 						<legend> Row Colors </legend> 
-						Green: Drug related, Police Visits 
-						Yellow: Property Crimes
-						Red: Violent Crimes
+						<ul>
+							<li id="green">Green: Drug related, Police Visits </li>
+							<li id= "yellow"> Yellow: Property Crimes </li>
+							<li id="red"> Red: Violent Crimes </li>
+						</ul>
 						<p> Input a date range to search for: </p>
 						<input type = "text" v-model = "date_from" class= "date_input">
 							<input type = "text" v-model = "date_to" class ="date_input">

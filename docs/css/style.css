@@ -59,6 +59,15 @@ table, th, td {
 	margin-left: 10px;
 }
 
+#red{
+	text-decoration-color: rgb(224, 102, 83);
+}
+#yellow{
+	text-decoration-color: rgb(224, 191, 83);
+}
+#green{
+	text-decoration-color: rgb(83, 224, 144); 
+}
 .violent {
 	background-color: rgb(224, 102, 83);
 }
@@ -67,7 +76,7 @@ table, th, td {
 }
 
 .other{
-	background-color: rgb(83, 224, 144) 
+	background-color: rgb(83, 224, 144); 
 }
 
 h1 {
