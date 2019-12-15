@@ -276,7 +276,7 @@ function getData(crime)
 		for(let i = 0; i < keys.length; i ++)
 		{
 
-			if((incidents[keys[i]]['date'] <= app.date_to && incidents[keys[i]]['date'] >= app.date_from) && (app.neigh_filter.includes(incidents[keys[i]]['neighborhood_name'])))
+			if((incidents[keys[i]]['date'] <= app.date_to && incidents[keys[i]]['date'] >= app.date_from) && (visible.includes(incidents[keys[i]]['neighborhood_name'])))
 			{
 				app.incidents[keys[i]] = incidents[keys[i]];
 				app.incidents[keys[i]]['class'] = 'violent';
