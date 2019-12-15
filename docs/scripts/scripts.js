@@ -140,7 +140,7 @@ function Init(crime_api_url) {
 			date_to: "2019-10-31",
 			time_from: "",
 			time_to: "",
-			neigh_filter: ["Conway/Battlecreek/Highwood","Greater East Side","West Side","Dayton's Bluff","Payne/Phalen","North End","Thomas/Dale(Frogtown)","Summit/University","West Seventh","Como","Hamline/Midway","St. Anthony","Union Park","Macalester-Groveland","Highland","Summit Hill","Capitol River"],
+			//neigh_filter: ["Conway/Battlecreek/Highwood","Greater East Side","West Side","Dayton's Bluff","Payne/Phalen","North End","Thomas/Dale(Frogtown)","Summit/University","West Seventh","Como","Hamline/Midway","St. Anthony","Union Park","Macalester-Groveland","Highland","Summit Hill","Capitol River"],
 			incidents: {
 								 
 			}
@@ -211,14 +211,14 @@ function addNFilter(neighborhood)
 {
 	console.log("addNFilter");
 	console.log(app.neigh_filter.includes(neighborhood));
-	if(app.neigh_filter.includes(neighborhood))
+	if(visible.includes(neighborhood))
 	{
-		var index = app.neigh_filter.indexOf(neighborhood);
-		app.neigh_filter.splice(index);
+		var index = visible.indexOf(neighborhood);
+		visible.splice(index);
 	}
 	else
 	{
-		app.neigh_filter.push(neighborhood);
+		visible.push(neighborhood);
 	}
 
 	getData(crime);
@@ -300,7 +300,6 @@ function getData(crime)
 				
 			$.getJSON(search_out, function(data) {
 				app.search_text = data['display_name'];
-				console.log(app.search_text);
 			});
 
 			app.search_text=center['lat'] + "," + center['lng'];
