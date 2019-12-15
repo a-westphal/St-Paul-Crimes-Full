@@ -197,8 +197,12 @@ function Init(crime_api_url) {
 
 				var search = geocode + block;
 				$.getJSON(geocode, function(data){
+					var block_lat = data[0]['lat'];
+					var block_lon = data[0]['lon'];
+					console.log("lat: " + block_lat);
+					console.log("lon: " + block_lon);
 					var list = "<dl><dt>Neighborhood</dt>" + "<dd>" + incident['neighborhood_name'] + "</dd>" + "<dt>Incident:</dt>" + "<dd>" + incident['incident'] + "</dd>" + "<dt> Date: </dt>" +"<dd>" +incident['date'] +"</dd>"
-					L.marker([lat,lon]).bindPopup(list).addTo(markersLayer);
+					L.marker([block_lat,block_lon]).bindPopup(list).addTo(markersLayer);
 				})
 
 			}			
