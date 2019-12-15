@@ -153,6 +153,7 @@
 			  			accessToken: 'pk.eyJ1IjoiYXdlc3RwaGFsIiwiYSI6ImNrM3Z5M2R5MTBoc2UzcGxiMWR3d2FoYW0ifQ.Eow1YC0uUG2NPxBM-iPmbg'
 					}).addTo(map);
 
+				console.log(map);
 				map.setMaxBounds(bounds);
 
 					//search bounds: 
@@ -190,7 +191,7 @@
 				
 				$.getJSON(crime_api_url + "/incidents",(data)=>{
 						var incidents = data;
-						console.log(incidents);
+						//console.log(incidents);
 						const keys = Object.keys(incidents);
 						var crimes = {
 							"Conway/Battlecreek/Highwood" : 0,
