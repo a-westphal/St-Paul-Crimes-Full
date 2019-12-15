@@ -195,7 +195,7 @@ function Init(crime_api_url) {
 					console.log(block);
 				}
 
-				var search = geocode + block;
+				var search = geocode + block +"+St+Paul+MN&addressdetails=1&limit=1";
 				console.log(search);
 				$.getJSON(geocode, function(data){
 					console.log(data);
