@@ -60,13 +60,13 @@ table, th, td {
 }
 
 #red{
-	text-decoration-color: rgb(224, 102, 83);
+	color: rgb(224, 102, 83);
 }
 #yellow{
-	text-decoration-color: rgb(224, 191, 83);
+	color: rgb(224, 191, 83);
 }
 #green{
-	text-decoration-color: rgb(83, 224, 144); 
+	color: rgb(83, 224, 144); 
 }
 .violent {
 	background-color: rgb(224, 102, 83);
