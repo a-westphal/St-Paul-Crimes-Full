@@ -196,6 +196,7 @@ function Init(crime_api_url) {
 				}
 
 				var search = geocode + block;
+				console.log(search);
 				$.getJSON(geocode, function(data){
 					console.log(data);
 					//var block_lat = data[0]['lat'];
