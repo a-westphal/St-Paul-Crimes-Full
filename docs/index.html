@@ -41,7 +41,291 @@
 
 		<title> St. Paul Crimes </title>
 
-		 <script src = "scripts/scripts.js"> </script>
+		 <script> 
+			var app;
+			var location;
+			var geocode = 'http://open.mapquestapi.com/nominatim/v1/search.php?key=uBxMcgwVXryBtdx0zShGffi0qgdlIcVN&format=json&q=';
+			var reverse = 'http://open.mapquestapi.com/nominatim/v1/reverse.php?key=uBxMcgwVXryBtdx0zShGffi0qgdlIcVN&format=json&';
+			var latlon;
+			var visible = [];
+			var map;
+			function Prompt() {
+				$("#dialog-form").dialog({
+					autoOpen: true,
+					modal: true,
+					width: "360px",
+					buttons: {
+						"Ok": function() {
+							var prompt_input = $("#prompt_input");
+							Init(prompt_input.val());
+							$(this).dialog("close");
+						},
+						"Cancel": function() {
+							$(this).dialog("close");
+						}
+					}
+				});
+			} //prompt
+
+
+			function Init(crime_api_url) {
+				//Map
+				var southWest = L.latLng(44.8868761,-93.241981);
+				var northEast = L.latLng(44.9924769,-93.0132809);
+				var bounds = L.latLngBounds(southWest,northEast);
+
+				var neighborhoods = {
+					"Conway/Battlecreek/Highwood" : {
+						lat: 44.929398,
+						lon: -93.021122
+					},
+					"Greater East Side": {
+						lat: 44.977504, 
+						lon: -93.025306
+					},
+					"West Side": {
+						lat: 44.934140,
+						lon: -93.080875
+					},
+					"Dayton's Bluff": {
+						lat: 44.956799, 
+						lon: -93.060833
+					},
+					"Payne/Phalen":{
+						lat: 44.977521, 
+						lon: -93.065995
+					},
+					"North End":{
+						lat: 44.977401,
+						lon: -93.105991
+					},
+					"Thomas/Dale(Frogtown)":{
+						lat: 44.959437, 
+						lon: -93.121250
+					},
+					"Summit/University":{
+						lat: 44.948550, 
+						lon:-93.126295
+					},
+					"West Seventh":{
+						lat: 44.928392,
+						lon: -93.125790
+					},
+					"Como":{
+						lat: 44.987942, 
+						lon: -93.220351
+					},
+					"Hamline/Midway" :{
+						lat: 44.962886, 
+						lon: -93.167055
+					},
+					"St. Anthony":{
+						lat: 44.974259, 
+						lon: -93.194574
+					},
+					"Union Park":{
+						lat: 44.948477,
+						lon: -93.174699
+					},
+					"Macalester-Groveland":{
+						lat: 44.934297,
+						lon: -93.177209
+					},
+					"Highland":{
+						lat: 44.912524,
+						lon: -93.177195
+					},
+					"Summit Hill":{
+						lat: 44.937841, 
+						lon: -93.136439
+					},
+					"Capitol River":{
+						lat: 44.948285, 
+						lon: -93.091623
+					}
+				}; //neighborhoods 
+
+				map = L.map('mapid').setView([44.9537,-93.0900], 13);
+					L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+				   		minZoom: 11,
+				   		maxZoom: 18,
+				   		id: 'mapbox/streets-v11',
+			  			accessToken: 'pk.eyJ1IjoiYXdlc3RwaGFsIiwiYSI6ImNrM3Z5M2R5MTBoc2UzcGxiMWR3d2FoYW0ifQ.Eow1YC0uUG2NPxBM-iPmbg'
+					}).addTo(map);
+
+				map.setMaxBounds(bounds);
+
+					//search bounds: 
+					//NW corner: 44.9924769,-93.241981,
+					//NE corner: 44.9924769,-93.0132809,15
+					//SE corner: 44.8868761,-93.0132809
+					//SW corner: 44.8868761,-93.2063927
+
+				app = new Vue({
+					el: "#app",
+					data: {
+						search_text: "",
+						incidents: {
+								 
+						},
+						test: [1,2,3]
+					},
+					methods: {
+						computed:function (neighborhood) 
+						{
+							if(visible.includes(neighborhood))
+							{
+								return true;
+							}
+
+							else
+							{
+								return false;
+							}
+						}
+					}
+				 });
+						
+					//data:
+				
+				$.getJSON(crime_api_url + "/incidents",(data)=>{
+						var incidents = data;
+						console.log(incidents);
+						const keys = Object.keys(incidents);
+						var crimes = {
+							"Conway/Battlecreek/Highwood" : 0,
+					  		"Greater East Side": 0,
+						  	"West Side":0,
+						  	"Dayton's Bluff":0 ,
+						  	"Payne/Phalen":0,
+						 	"North End":0,
+						  	"Thomas/Dale(Frogtown)":0,
+						  	"Summit/University":0,
+						  	"West Seventh":0,
+						  	"Como":0,
+						 	"Hamline/Midway" :0,
+						  	"St. Anthony":0,
+						 	"Union Park":0,
+						  	"Macalester-Groveland":0,
+						  	"Highland":0,
+						  	"Summit Hill":0,
+						  	"Capitol River":0
+						};
+						const nest_Keys = Object.keys(incidents[keys[0]]);
+						//console.log(nest_Keys);
+						for(let i = 0; i < keys.length; i ++)
+						{
+							//console.log(incidents[keys[i]])
+							if(incidents[keys[i]]['date'] <= "2019-10-31" && incidents[keys[i]]['date'] >= "2019-10-01")
+							{
+								app.incidents[keys[i]] = incidents[keys[i]];
+								app.incidents[keys[i]]['class'] = 'violent';
+								for(let j =0; j < nest_Keys.length; j ++)
+								{
+									if(j == 5)
+									{
+										neighborhood_hold = incidents[keys[i]][nest_Keys[j]];
+										if(crimes.hasOwnProperty(neighborhood_hold))
+										{
+											crimes[neighborhood_hold] += 1;
+										}
+									}
+								}
+
+							}
+
+						}
+						//add markers for each of the keys
+						var markersLayer = new L.LayerGroup();
+						const neigh_Keys = Object.keys(neighborhoods);
+						const crime_Keys = Object.keys(crimes);
+						for(let i = 0; i < neigh_Keys.length; i ++)
+						{
+							lat = neighborhoods[neigh_Keys[i]]['lat'];
+							lon = neighborhoods[neigh_Keys[i]]['lon'];
+							crimes_num = crimes[neigh_Keys[i]];
+
+							var list = "<dl><dt>Neighborhood</dt>" + "<dd>" + neigh_Keys[i] + "</dd>" + "<dt>Crimes</dt>" + "<dd>" + crimes_num + "</dd>"
+							L.marker([lat,lon]).bindPopup(list).addTo(markersLayer);
+						}
+
+						map.addLayer(markersLayer);
+
+						//check if the map has moved: 
+						map.on('moveend',function(){
+
+							var center = map.getCenter();
+							var search_out = reverse + "lat=" + center['lat'] + "&lon=" + center['lng'] + "&addressdetails=1"; 
+				
+							$.getJSON(search_out, function(data) {
+								console.log(data);
+								app.search_text = data['display_name'];
+							});
+
+							app.search_text=center['lat'] + "," + center['lng'];
+							var northWest = L.latLng(map.getBounds().getNorth(), map.getBounds().getWest());
+							var southEast = L.latLng(map.getBounds().getSouth(), map.getBounds().getEast());
+									
+							var myBounds = L.latLngBounds(northWest,southEast);
+							var visible_hold = [];	
+							for(let i = 0; i < neigh_Keys.length; i ++)
+							{
+								var lat_two = neighborhoods[neigh_Keys[i]]['lat'];
+								var lon_two = neighborhoods[neigh_Keys[i]]['lon'];
+								if(myBounds.getNorth() < lat_two || myBounds.getSouth() > lat_two || myBounds.getEast() < lon_two || myBounds.getWest() > lon_two )
+								{
+									
+								}
+								else
+								{
+									visible_hold.push(neigh_Keys[i]);
+								}
+							}  
+							setVisible(visible_hold);
+						})
+					});
+			}//Init
+
+			//check if the search button has been clicked:
+			function searchMap(){
+				var locale = app.search_text;
+				var locale = locale.split(" ").join("+");
+				var search = geocode + locale + "+St+Paul+MN&addressdetails=1&limit=1"; 
+				console.log(" Search variable : " + search);
+
+				$.getJSON(search, function(data){
+					console.log("search data: " + data['lat']);
+					var lat = data['lat'];
+					var lon = data['lon'];
+
+					map.setView([lat,lon],17);
+				}); 
+			}
+
+			function setVisible(visible_vals)
+			{
+				visible = visible_vals;
+			}
+			function setClass(code)
+			{
+				if(code >= 110 && code <=566)
+				{
+					//violent
+				}
+
+				else if(code >= 600 && code <= 1436 )
+				{
+					//property
+				}
+
+				else
+				{	
+					//other
+				}
+			}
+
+
+</script>
 	</head>
 	<body id = "margins" onload="Prompt()">
 		<!-- Nav bar -->
@@ -84,69 +368,27 @@
 		-->
 
 			<div id = "table_space">
-				<div class  ="row">
-					<div class = "col-sm"> 
-						<!-- Date filter -->
-						<p> Input a date range to search for: </p>
-						<input type = "text" v-model = "date_from" class= "date_input">
-							<input type = "text" v-model = "date_to" class ="date_input">
-								<button onclick = "" id = "date_button" type ="button" >
-										Apply </button> </input>
-						</input>
-
-						<!-- Time filter -->
-						<p> Input a time range to search for: </p>
-						<input type = "text" v-model = "time_from" class= "time_input">
-							<input type = "text" v-model = "time_to" class ="time_input">
-								<button onclick = "" id = "time_button" type ="button" >
-										Apply </button> </input>
-
-						<p> Select the neighborhoods you want to view: </p>
-						<ul>
-							<li><input type ="checkbox" value = "Conway/Battlecreek/Highwood" onclick = "addNFilter('Conway/Battlecreek/Highwood')" id = "Conway/Battlecreek/Highwood"/> Conway/Battlecreek/Highwood </li>
-							<li><input type ="checkbox" value = "Greater East Side" onclick = "addNFilter('Greater East Side')" id = "Greater East Side"/> Greater East Side </li> 
-							<li><input type ="checkbox" value = "West Side" onclick = "addNFilter('West Side')" id = "West Side"/> West Side </li> 
-							<li><input type ="checkbox" value = "Dayton's Bluff" onclick = "addNFilter('Dayton's Bluff')" id = "Dayton's Bluff"/> Dayton's Bluff </li> 
-							<li><input type ="checkbox" value = "Payne/Phalen" onclick = "addNFilter('Payne/Phalen')" id = "Payne/Phalen"/> Payne/Phalen </li> 
-							<li><input type ="checkbox" value = "North End" onclick = "addNFilter('North End')" id = "North End"/> North End </li> 
-							<li><input type ="checkbox" value = "Thomas/Dale(Frogtown)" onclick = "addNFilter('Thomas/Dale(Frogtown)')" id = "Thomas/Dale(Frogtown)"/> Thomas/Dale(Frogtown) </li> 
-							<li><input type ="checkbox" value = "Summit/University" onclick = "addNFilter('Summit/University')" id = "Summit/University"/> Summit/University </li> 
-							<li><input type ="checkbox" value = "West Seventh" onclick = "addNFilter('West Seventh')" id = "West Seventh"/> West Seventh </li> 
-							<li><input type ="checkbox" value = "Como" onclick = "addNFilter('Como')" id = "Como"/> Como </li> 
-							<li><input type ="checkbox" value = "Hamline/Midway" onclick = "addNFilter('Hamline/Midway')" id = "Hamline/Midway"/> Hamline/Midway </li> 
-							<li><input type ="checkbox" value = "St. Anthony" onclick = "addNFilter('St. Anthony')" id = "St. Anthony"/> St. Anthony </li> 
-							<li><input type ="checkbox" value = "Union Park" onclick = "addNFilter('Union Park')" id = "Union Park"/> Union Park </li> 
-							<li><input type ="checkbox" value = "Macalester-Groveland" onclick = "addNFilter('Macalester-Groveland')" id = "Macalester-Groveland"/> Macalester-Groveland </li> 
-							<li><input type ="checkbox" value = "Highland" onclick = "addNFilter('Highland')" id = "Highland"/> Highland </li> 
-							<li><input type ="checkbox" value = "Summit Hill" onclick = "addNFilter('Summit Hill')" id = "Summit Hill"/> Summit Hill </li> 
-							<li><input type ="checkbox" value = "Capitol River" onclick = "addNFilter('Capitol River')" id = "Capitol River"/> Capitol River </li>  
-
-						<!-- Neighborhood Filter --> 
-					</div>
-
-					<div class = "col-sm">
-						<h1>
-						Table of Crime Data
-						</h1> 	
-						<table id = "table" frame = "box">
-							<thead>
-								<th> Date </th>
-								<th> Code </th>
-								<th> Neighborhood Name </th>
-								<th> Incident-Type </th>
-							</thead>
-							<tbody id = "table_text">
-								<tr v-for = "item in incidents" v-if= "computed(item.neighborhood_name)">
-									<!--v-if= "item.checkVisible() == true-->
-									<td> {{ item.date }} </td>
-									<td> {{ item.code }} </td>
-									<td> {{ item.neighborhood_name }} </td>
-									<td> {{ item.incident }} </td>
-								</tr>
-							</tbody>
-						</table>
-					</div> <!--column for table -->
-				</div> <!--rows -->
+				<h1>
+				Table of Crime Data
+				</h1>
+				<h3> 	
+				<table id = "table" frame = "box">
+					<thead>
+						<th> Date </th>
+						<th> Code </th>
+						<th> Neighborhood Name </th>
+						<th> Incident-Type </th>
+					</thead>
+					<tbody id = "table_text">
+						<tr v-for = "item in incidents" v-if= "computed(item.neighborhood_name)">
+							<!--v-if= "item.checkVisible() == true-->
+							<td > {{ item.date }} </td>
+							<td> {{ item.code }} </td>
+							<td> {{ item.neighborhood_name }} </td>
+							<td> {{ item.incident }} </td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
     	</div> 
 
