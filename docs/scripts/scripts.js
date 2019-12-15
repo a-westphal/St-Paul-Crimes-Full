@@ -181,6 +181,13 @@ function Init(crime_api_url) {
 			addMarker:function(incident)
 			{
 				console.log(incident['block']);
+				var res = incident['block'].split(" ");
+				var block;  
+				if(res[0].includes("X"))
+				{
+					block = res[0].replace("X","0");
+					console.log(block);
+				}
 				//$.getJSON()
 				//var list = "<dl><dt>Neighborhood</dt>" + "<dd>" + incident['neighborhood_name'] + "</dd>" + "<dt>Incident:</dt>" + "<dd>" + incident['incident'] + "</dd>" + "<dt> Date: </dt>" +"<dd>" +incident['date'] +"</dd>"
 				//L.marker([lat,lon]).bindPopup(list).addTo(markersLayer);
