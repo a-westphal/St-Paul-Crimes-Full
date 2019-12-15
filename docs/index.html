@@ -137,8 +137,7 @@
 								<th> Incident-Type </th>
 							</thead>
 							<tbody id = "table_text">
-								<tr v-for = "item in incidents" v-if= "computed(item.neighborhood_name)">
-									<!--v-if= "item.checkVisible() == true-->
+								<tr v-for = "item in incidents" v-if= "computed(item.neighborhood_name)" :class="getClass(`${item.code}`)">
 									<td> {{ item.date }} </td>
 									<td> {{ item.code }} </td>
 									<td> {{ item.neighborhood_name }} </td>

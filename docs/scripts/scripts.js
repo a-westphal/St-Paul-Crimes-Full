@@ -224,6 +224,27 @@ function addNFilter(neighborhood)
 	getData(crime);
 }
 
+function getClass (code)
+{
+	if(code >= 110 && code <= 566)
+	{
+		//violent
+
+		return "violent";
+	}
+	else if(code >= 600 && code <= 1436)
+	{
+		//property
+		return "property";
+	}
+
+	else if(code >=1800 && code <= 9959)
+	{
+		//other
+		return "other";
+	} 
+}
+
 function getData(crime)
 {
 	var count = 0;
