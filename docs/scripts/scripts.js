@@ -251,8 +251,7 @@ function getData(crime)
 		};
 
 		const nest_Keys = Object.keys(incidents[keys[0]]);
-		console.log("incident keys " + keys);
-		console.log("nested keys " + nest_Keys);
+	
 		for(let i = 0; i < keys.length; i ++)
 		{
 
@@ -268,7 +267,6 @@ function getData(crime)
 						if(crimes.hasOwnProperty(neighborhood_hold))
 						{
 							crimes[neighborhood_hold] += 1;
-							console.log("crimes" + crimes);
 						}
 					}
 				}
