@@ -39,6 +39,11 @@ li.hs-form-checkbox {
 	margin-top: 10px;
 }
 
+#paragraphs {
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-bottom:10px;
+}
 table, th, td {
 	border: 1px solid black;
 }

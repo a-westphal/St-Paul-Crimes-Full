@@ -177,39 +177,8 @@ function Init(crime_api_url) {
 					//other
 					return "other";
 				} 
-			},
-			addMarker:function(incident)
-			{
-				console.log(incident['block']);
-				var res = incident['block'].split(" ");
-				var block;  
-				var block_hold;
-				if(res[0].includes("X"))
-				{
-					block_hold = res[0].replace("X","0");
-					block = block.splice("&");
-					block = block_hold.split(" ").join("+");
-					console.log(block);
-				}
-				else {
-					block = block.splice("&");
-					block = incident['block'].split(" ").join("+");
-					console.log(block);
-				}
-
-				var search = geocode + block +"+St+Paul+MN&addressdetails=1&limit=1";
-				console.log(search);
-				$.getJSON(geocode, function(data){
-					//console.log(data);
-					var block_lat = data[0]['lat'];
-					var block_lon = data[0]['lon'];
-					console.log("lat: " + block_lat);
-					console.log("lon: " + block_lon);
-					var list = "<dl><dt>Neighborhood</dt>" + "<dd>" + incident['neighborhood_name'] + "</dd>" + "<dt>Incident:</dt>" + "<dd>" + incident['incident'] + "</dd>" + "<dt> Date: </dt>" +"<dd>" +incident['date'] +"</dd>"
-					L.marker([block_lat,block_lon]).bindPopup(list).addTo(markersLayer);
-				})
-
-			}			
+			}
+						
 		}
 
 	});
